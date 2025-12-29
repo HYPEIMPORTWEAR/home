@@ -276,13 +276,13 @@ function enterSite() {
     // Add fullscreen body class
     document.body.classList.add('fullscreen-mode');
 
-    // Show scratch card popup after a short delay (only if user hasn't spun yet)
+    // ALWAYS show scratch card for new users who haven't spun
     setTimeout(() => {
         const hasSpun = localStorage.getItem('neon_hasSpun');
         if (hasSpun !== 'true') {
             openScratchModal();
         }
-    }, 800); // Delay for smooth transition after splash screen fades
+    }, 500); // Shorter delay for better UX
 }
 
 // Request fullscreen
@@ -310,6 +310,14 @@ function checkIfAlreadyEntered() {
         }
         AppState.hasEntered = true;
         document.body.classList.add('fullscreen-mode');
+        
+        // Check if user needs to see scratch card
+        setTimeout(() => {
+            const hasSpun = localStorage.getItem('neon_hasSpun');
+            if (hasSpun !== 'true') {
+                openScratchModal();
+            }
+        }, 300);
     }
 }
 

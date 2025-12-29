@@ -21,9 +21,12 @@ function initCategoryPage(categoryName) {
     // Render products for this category
     renderCategoryProducts();
 
-    // Initialize cart/wishlist badges
-    CartManager.updateCartBadge();
-    CartManager.updateWishlistBadge();
+    // Initialize cart/wishlist with CartManager's robust init
+    CartManager.init();
+    
+    // Update cart and wishlist UI
+    updateCartUI();
+    updateWishlistUI();
 
     // Setup checkout button
     setupCheckout();
@@ -403,9 +406,3 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 300);
     }, 5000);
 }
-
-// Initialize cart UI on load
-document.addEventListener('DOMContentLoaded', () => {
-    updateCartUI();
-    updateWishlistUI();
-});

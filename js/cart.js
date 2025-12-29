@@ -39,8 +39,9 @@ const CartManager = {
 
         if (existingItem) {
             existingItem.qty += qty;
+            console.log('CartManager: Updated existing item quantity', existingItem);
         } else {
-            cart.push({
+            const newItem = {
                 id: product.id,
                 cartId: cartItemId,
                 title: product.title,
@@ -48,11 +49,14 @@ const CartManager = {
                 img: product.img,
                 selectedSize: selectedSize,
                 qty: qty
-            });
+            };
+            cart.push(newItem);
+            console.log('CartManager: Added new item to cart', newItem);
         }
 
         this.saveCart(cart);
         this.updateCartBadge();
+        console.log('CartManager: Cart now has', cart.length, 'unique items');
         return cart;
     },
 
@@ -117,12 +121,27 @@ const CartManager = {
     // Update cart badge in header
     updateCartBadge() {
         const badge = document.getElementById('cart-count');
+        const count = this.getTotalItems();
+        
         if (badge) {
-            badge.innerText = this.getTotalItems();
+            badge.innerText = count;
+            console.log('CartManager: Cart badge updated to', count);
             // Pulse animation
             badge.classList.remove('pulse-animation');
             void badge.offsetWidth; // Trigger reflow
             badge.classList.add('pulse-animation');
+        } else {
+            console.warn('CartManager: Cart badge element not found, retrying...');
+            // Retry after a short delay if element not found
+            setTimeout(() => {
+                const retryBadge = document.getElementById('cart-count');
+                if (retryBadge) {
+                    retryBadge.innerText = this.getTotalItems();
+                    console.log('CartManager: Cart badge updated on retry to', this.getTotalItems());
+                } else {
+                    console.error('CartManager: Cart badge element still not found after retry');
+                }
+            }, 100);
         }
     },
 
@@ -147,12 +166,15 @@ const CartManager = {
 
         if (index > -1) {
             wishlist.splice(index, 1);
+            console.log('CartManager: Removed product', productId, 'from wishlist');
         } else {
             wishlist.push(productId);
+            console.log('CartManager: Added product', productId, 'to wishlist');
         }
 
         this.saveWishlist(wishlist);
         this.updateWishlistBadge();
+        console.log('CartManager: Wishlist now has', wishlist.length, 'items');
         return wishlist;
     },
 
@@ -162,8 +184,23 @@ const CartManager = {
 
     updateWishlistBadge() {
         const badge = document.getElementById('wishlist-count');
+        const count = this.getWishlist().length;
+        
         if (badge) {
-            badge.innerText = this.getWishlist().length;
+            badge.innerText = count;
+            console.log('CartManager: Wishlist badge updated to', count);
+        } else {
+            console.warn('CartManager: Wishlist badge element not found, retrying...');
+            // Retry after a short delay if element not found
+            setTimeout(() => {
+                const retryBadge = document.getElementById('wishlist-count');
+                if (retryBadge) {
+                    retryBadge.innerText = this.getWishlist().length;
+                    console.log('CartManager: Wishlist badge updated on retry to', this.getWishlist().length);
+                } else {
+                    console.error('CartManager: Wishlist badge element still not found after retry');
+                }
+            }, 100);
         }
     },
 
@@ -219,6 +256,33 @@ const CartManager = {
         if (typeof updateCartUI === 'function') updateCartUI();
         if (typeof updateWishlistUI === 'function') updateWishlistUI();
         if (typeof renderCategoryProducts === 'function') renderCategoryProducts();
+    },
+
+    // Initialize - call this immediately when page loads
+    init() {
+        console.log('CartManager: Initializing...');
+        console.log('CartManager: Cart items:', this.getTotalItems());
+        console.log('CartManager: Wishlist items:', this.getWishlist().length);
+
+        // Update badges immediately
+        this.updateCartBadge();
+        this.updateWishlistBadge();
+        this.refreshAllUI();
+
+        // Also update after short delay to catch late-loading elements
+        setTimeout(() => {
+            this.updateCartBadge();
+            this.updateWishlistBadge();
+            this.refreshAllUI();
+            console.log('CartManager: Updated badges (100ms delay)');
+        }, 100);
+
+        setTimeout(() => {
+            this.updateCartBadge();
+            this.updateWishlistBadge();
+            this.refreshAllUI();
+            console.log('CartManager: Updated badges (500ms delay)');
+        }, 500);
     }
 };
 
@@ -229,9 +293,25 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// Initialize badges on page load
-document.addEventListener('DOMContentLoaded', () => {
-    CartManager.refreshAllUI();
+// Initialize immediately when script loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        CartManager.init();
+    });
+} else {
+    // DOM already loaded
+    CartManager.init();
+}
+
+// Also update on page show (back/forward navigation)
+window.addEventListener('pageshow', () => {
+    CartManager.init();
+});
+
+// Update on window focus (switching tabs)
+window.addEventListener('focus', () => {
+    CartManager.updateCartBadge();
+    CartManager.updateWishlistBadge();
 });
 
 // Export for use in other scripts
