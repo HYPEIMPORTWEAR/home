@@ -645,6 +645,8 @@ let scratchCanvas = null;
 let scratchCtx = null;
 let isScratching = false;
 let scratchedPercent = 0;
+let scratchModalOpened = false;
+const SCRATCH_DISCOUNT = 10;
 
 function initScratchCard() {
     scratchCanvas = document.getElementById('scratch-canvas');
@@ -799,11 +801,11 @@ function revealPrize() {
     scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
 
     // Show result message
-    resultText.innerText = 'YOU WON 10% OFF!';
+    resultText.innerText = `YOU WON ${SCRATCH_DISCOUNT}% OFF!`;
     resultText.classList.add('revealed');
 
     // Update State
-    AppState.discount = 10;
+    AppState.discount = SCRATCH_DISCOUNT;
     AppState.hasSpun = true;
 
     // Persist
@@ -813,11 +815,57 @@ function revealPrize() {
     // Update UI
     updateCartUI();
 
-    // Close modal after delay and show Category Selection
+    // Show apply CTA instead of auto-closing
+    showScratchCTA();
+}
+
+function showScratchCTA() {
+    const cta = document.getElementById('scratch-cta');
+    if (!cta) return;
+
+    cta.classList.add('active');
+
+    const applyBtn = document.getElementById('apply-discount-btn');
+    if (applyBtn) {
+        applyBtn.textContent = `Apply ${SCRATCH_DISCOUNT}% and continue`;
+        applyBtn.disabled = false;
+        try {
+            applyBtn.focus({ preventScroll: true });
+        } catch (e) {
+            // Focus may fail silently on some browsers
+        }
+    }
+}
+
+function applyScratchDiscount() {
+    AppState.discount = SCRATCH_DISCOUNT;
+    AppState.hasSpun = true;
+    localStorage.setItem('neon_hasSpun', 'true');
+    localStorage.setItem('neon_discount', AppState.discount);
+
+    updateCartUI();
+    showToast(`Discount applied: ${SCRATCH_DISCOUNT}% off your haul`, 'success');
+
+    const fab = document.getElementById('spin-fab');
+    if (fab) {
+        fab.classList.add('hidden');
+    }
+
+    closeModal('spin-modal');
+
     setTimeout(() => {
-        closeModal('spin-modal');
-        document.getElementById('spin-fab').classList.add('hidden');
         openCategorySelectionModal();
+    }, 300);
+}
+
+function scheduleScratchForNewUser() {
+    const hasSpun = localStorage.getItem('neon_hasSpun') === 'true';
+    if (hasSpun || AppState.hasSpun) return;
+
+    setTimeout(() => {
+        if (!AppState.hasSpun) {
+            openScratchModal();
+        }
     }, 800);
 }
 
@@ -866,6 +914,15 @@ document.getElementById('confirm-interests-btn').onclick = () => {
 
 // Initialize scratch card when modal opens
 function openScratchModal() {
+    if (AppState.hasSpun) {
+        showToast('You already unlocked your discount!', 'info');
+        return;
+    }
+
+    const modal = document.getElementById('spin-modal');
+    if (modal && !modal.classList.contains('hidden') && scratchModalOpened) return;
+
+    scratchModalOpened = true;
     openModal('spin-modal');
     // Small delay to ensure modal is visible before initializing canvas
     setTimeout(initScratchCard, 100);
@@ -899,6 +956,8 @@ function openCheckoutModal() {
     // Clear previous input
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-phone').value = '';
+    document.getElementById('customer-address').value = '';
+    setCheckoutError('');
 
     // Open checkout modal
     openModal('checkout-modal');
@@ -909,34 +968,57 @@ function openCheckoutModal() {
     }, 100);
 }
 
+function setCheckoutError(message = '') {
+    const errorBox = document.getElementById('checkout-error');
+    if (!errorBox) return;
+
+    if (!message) {
+        errorBox.classList.remove('visible');
+        errorBox.textContent = '';
+        return;
+    }
+
+    errorBox.textContent = message;
+    errorBox.classList.add('visible');
+}
+
 // Process checkout and redirect to WhatsApp
 function processCheckout() {
     const customerName = document.getElementById('customer-name').value.trim();
-    const customerPhone = document.getElementById('customer-phone').value.trim();
+    const phoneInput = document.getElementById('customer-phone');
     const customerAddress = document.getElementById('customer-address').value.trim();
 
+    const sanitizedPhone = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+    if (phoneInput.value !== sanitizedPhone) {
+        phoneInput.value = sanitizedPhone;
+    }
+
+    setCheckoutError('');
+
     if (!customerName) {
-        showToast('Please enter your name', 'error');
+        setCheckoutError('Please enter your name.');
         document.getElementById('customer-name').focus();
         return;
     }
 
-    if (!customerPhone || customerPhone.length < 10) {
-        showToast('Please enter a valid phone number', 'error');
-        document.getElementById('customer-phone').focus();
+    if (!sanitizedPhone || sanitizedPhone.length !== 10) {
+        setCheckoutError('Enter a valid 10-digit mobile number.');
+        phoneInput.focus();
         return;
     }
 
     if (!customerAddress) {
-        showToast('Please enter your full delivery address', 'error');
+        setCheckoutError('Add your delivery address (house no., street, city, PIN).');
         document.getElementById('customer-address').focus();
         return;
     }
 
+    setCheckoutError('');
+
     const phoneNumber = "918309223139"; // Merchant WhatsApp number
 
     let message = `*New Order from: ${customerName}*%0a`;
-    message += `📞 Phone: ${customerPhone}%0a`;
+    message += `📞 Phone: ${sanitizedPhone}%0a`;
     message += `📍 Address: ${customerAddress}%0a`;
     message += "-------------------%0a";
     message += "*Order Details:*%0a";
@@ -967,6 +1049,40 @@ function processCheckout() {
     setTimeout(() => {
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
     }, 500);
+}
+
+function validateCheckoutField(field) {
+    if (field === 'name') {
+        const val = document.getElementById('customer-name').value.trim();
+        if (!val) {
+            setCheckoutError('Please enter your name.');
+            return false;
+        }
+    }
+
+    if (field === 'phone') {
+        const phoneInput = document.getElementById('customer-phone');
+        const digits = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+        if (phoneInput.value !== digits) {
+            phoneInput.value = digits;
+        }
+
+        if (!digits || digits.length !== 10) {
+            setCheckoutError('Enter a 10-digit mobile number (numbers only).');
+            return false;
+        }
+    }
+
+    if (field === 'address') {
+        const val = document.getElementById('customer-address').value.trim();
+        if (!val) {
+            setCheckoutError('Add your delivery address (house no., street, city, PIN).');
+            return false;
+        }
+    }
+
+    setCheckoutError('');
+    return true;
 }
 
 // Legacy checkout function (kept for compatibility)
@@ -1328,6 +1444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init();
+    scheduleScratchForNewUser();
     initCursor();
     initRipple();
     initParticles();
@@ -1380,6 +1497,34 @@ document.addEventListener('DOMContentLoaded', () => {
             processCheckout();
         }
     });
+
+    const phoneInput = document.getElementById('customer-phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', () => {
+            const digits = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+            if (phoneInput.value !== digits) {
+                phoneInput.value = digits;
+            }
+            setCheckoutError('');
+        });
+
+        phoneInput.addEventListener('blur', () => validateCheckoutField('phone'));
+    }
+
+    const nameInput = document.getElementById('customer-name');
+    if (nameInput) {
+        nameInput.addEventListener('blur', () => validateCheckoutField('name'));
+    }
+
+    const addressInput = document.getElementById('customer-address');
+    if (addressInput) {
+        addressInput.addEventListener('blur', () => validateCheckoutField('address'));
+    }
+
+    const applyDiscountBtn = document.getElementById('apply-discount-btn');
+    if (applyDiscountBtn) {
+        applyDiscountBtn.addEventListener('click', applyScratchDiscount);
+    }
 });
 
 // Expose functions to window for HTML onclick attributes

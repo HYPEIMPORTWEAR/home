@@ -81,8 +81,8 @@ function initParticles() {
     setSize();
 
     let particlesArray = [];
-    // Adjust density based on screen size
-    const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 200);
+    // Adjust density based on screen size (Increased for better density)
+    const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 5000), 400);
 
     let mouse = {
         x: null,
@@ -110,9 +110,9 @@ function initParticles() {
             this.y = Math.random() * canvas.height;
             this.size = Math.random() * 2 + 1;
 
-            // Random initial velocity (Reduced energy)
-            this.vx = (Math.random() - 0.5) * 0.8;
-            this.vy = (Math.random() - 0.5) * 0.8;
+            // Random initial velocity (Further reduced for a cinematic look)
+            this.vx = (Math.random() - 0.5) * 0.4;
+            this.vy = (Math.random() - 0.5) * 0.4;
 
             this.color = '#ccff00'; // Primary neon color
             this.opacity = Math.random() * 0.5 + 0.2;
@@ -126,12 +126,12 @@ function initParticles() {
         }
 
         update() {
-            // Random Brownian-like motion (Reduced Jitter)
-            this.vx += (Math.random() - 0.5) * 0.03;
-            this.vy += (Math.random() - 0.5) * 0.03;
+            // Random Brownian-like motion (Reduced Jitter for smoothness)
+            this.vx += (Math.random() - 0.5) * 0.015;
+            this.vy += (Math.random() - 0.5) * 0.015;
 
-            // Cap the velocity (Reduced speed limit)
-            const speedLimit = 1.2;
+            // Cap the velocity (Stricter limit for calm motion)
+            const speedLimit = 0.6;
             this.vx = Math.max(Math.min(this.vx, speedLimit), -speedLimit);
             this.vy = Math.max(Math.min(this.vy, speedLimit), -speedLimit);
 
