@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer">
+    <title>Sneakers & Shoes | Hype Import Wear</title>
+    <meta name="description" content="Shop premium Sneakers at Hype Import Wear. Jordan, Nike, Adidas heat drops.">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/product-page.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Background Effect -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header with Navigation -->
+    <header class="header-nav">
+        <div class="header-nav-content">
+            <a href="../index.html" class="nav-logo">
+                <img src="../assets/590383713_17843854689654572_6541334605260396577_n.jpg" alt="Hype Import Wear">
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="nav-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="jackets.html" class="nav-link">Jackets</a>
+                <a href="hoodies.html" class="nav-link">Hoodies</a>
+                <a href="tracksuits.html" class="nav-link">Track Suits</a>
+                <a href="sneakers.html" class="nav-link active">Sneakers</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button id="wishlist-btn" class="wishlist-btn" onclick="openModal('wishlist-modal')">
+                    <span class="wishlist-icon">♡</span>
+                    <span id="wishlist-count" class="badge">0</span>
+                </button>
+                <button id="cart-btn" class="cart-btn" onclick="openModal('cart-modal')">
+                    Cart <span id="cart-count" class="badge">0</span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <span class="menu-icon">☰</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav hidden" id="mobile-nav">
+            <a href="../index.html" class="mobile-nav-link">Home</a>
+            <a href="jackets.html" class="mobile-nav-link">Jackets & Bombers</a>
+            <a href="hoodies.html" class="mobile-nav-link">Hoodies</a>
+            <a href="tracksuits.html" class="mobile-nav-link">Track Suits</a>
+            <a href="sneakers.html" class="mobile-nav-link active">Sneakers & Shoes</a>
+        </nav>
+    </header>
+
+    <section class="category-hero">
+        <div class="category-hero-content">
+            <h1 class="category-hero-title">SNEAKERS & SHOES</h1>
+            <p class="category-hero-subtitle">Jordan • Nike • Adidas • Heat Drops Only</p>
+        </div>
+    </section>
+
+    <main class="category-page">
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">Sneakers & Shoes</span>
+            </nav>
+
+            <div id="products-container" class="category-products-grid"></div>
+        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal hidden">
+        <div class="modal-content product-details-content">
+            <button class="close-btn" onclick="closeModal('product-modal')">&times;</button>
+            <div class="product-details-grid">
+                <div class="product-image-container">
+                    <div class="slider-wrapper">
+                        <div id="modal-slider" class="image-slider">
+                            <img id="modal-img" src="" alt="Product Image" class="modal-product-img">
+                        </div>
+                        <button id="slider-prev" class="slider-btn prev">&lt;</button>
+                        <button id="slider-next" class="slider-btn next">&gt;</button>
+                    </div>
+                    <div id="slider-dots" class="slider-dots"></div>
+                    <div id="modal-thumbnails" class="product-thumbnails"></div>
+                </div>
+                <div class="product-info-col">
+                    <h2 id="modal-title">Product Title</h2>
+                    <p id="modal-price" class="modal-price">₹0</p>
+                    <div class="modal-description">
+                        <h4>Description</h4>
+                        <p id="modal-desc">Product description goes here.</p>
+                        <ul id="modal-features"></ul>
+                    </div>
+                    <div class="product-options">
+                        <div class="option-group">
+                            <label>Size:</label>
+                            <div id="size-selector" class="size-selector"></div>
+                        </div>
+                    </div>
+                    <button id="modal-add-btn" class="btn-add-large">ADD TO CART</button>
+                    <a id="modal-ig-link" href="#" target="_blank" class="ig-link mt-20"
+                        style="display:block; text-align:center;">View on Instagram 📸</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal hidden">
+        <div class="modal-content cart-content">
+            <div class="modal-header">
+                <h2>Your Cart</h2>
+                <button class="close-btn" onclick="closeModal('cart-modal')">&times;</button>
+            </div>
+            <div id="cart-items" class="cart-items">
+                <p class="empty-msg">Your cart is empty.</p>
+            </div>
+            <div class="cart-footer">
+                <div class="summary">
+                    <p>Subtotal: <span id="cart-subtotal">₹0.00</span></p>
+                    <p class="discount-row hidden">Discount (<span id="discount-rate">0</span>%): -<span
+                            id="discount-amount">₹0.00</span></p>
+                    <h3>Total: <span id="cart-total">₹0.00</span></h3>
+                </div>
+                <button id="checkout-btn" class="btn-primary full-width" onclick="openModal('checkout-modal')">Checkout
+                    via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal hidden">
+        <div class="modal-content checkout-content">
+            <div class="modal-header">
+                <h2>Complete Your Order</h2>
+                <button class="close-btn" onclick="closeModal('checkout-modal')">&times;</button>
+            </div>
+            <div class="checkout-form">
+                <p class="checkout-subtitle">Enter your details to proceed</p>
+                <div class="form-group">
+                    <label for="customer-name">Your Name *</label>
+                    <input type="text" id="customer-name" class="form-input" placeholder="Enter your full name"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Phone Number *</label>
+                    <input type="tel" id="customer-phone" class="form-input"
+                        placeholder="Enter your valid mobile number" required pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                    <label for="customer-address">Delivery Address *</label>
+                    <textarea id="customer-address" class="form-input address-input"
+                        placeholder="House No, Street, City, Pin Code" required rows="3"></textarea>
+                </div>
+                <div class="checkout-summary">
+                    <p>Items: <span id="checkout-items-count">0</span></p>
+                    <p>Total: <span id="checkout-total" class="highlight">₹0</span></p>
+                </div>
+                <button id="confirm-checkout-btn" class="btn-primary full-width">Send Order via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div id="wishlist-modal" class="modal hidden">
+        <div class="modal-content wishlist-content">
+            <div class="modal-header">
+                <h2>Your Wishlist</h2>
+                <button class="close-btn" onclick="closeModal('wishlist-modal')">&times;</button>
+            </div>
+            <div id="wishlist-items" class="wishlist-items">
+                <p class="empty-msg">Your wishlist is empty. ♡</p>
+            </div>
+        </div>
+    </div>
+
+    <button id="back-to-top" class="back-to-top hidden" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="btt-icon">↑</span>
+        <span class="btt-text">TOP</span>
+    </button>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <h3 class="footer-logo">HYPE IMPORT WEAR</h3>
+                <p class="footer-tagline">Elevate Your Drip. Stay Authentic.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Categories</h4>
+                <a href="jackets.html">Jackets & Bombers</a>
+                <a href="hoodies.html">Hoodies</a>
+                <a href="tracksuits.html">Track Suits</a>
+                <a href="sneakers.html">Sneakers & Shoes</a>
+            </div>
+            <div class="footer-social">
+                <h4>Connect</h4>
+                <a href="https://www.instagram.com/hypeimportwear/" target="_blank" class="social-link">📸 Instagram</a>
+                <a href="https://wa.me/918309223139" target="_blank" class="social-link">💬 WhatsApp</a>
+            </div>
+            <div class="footer-contact">
+                <h4>Order Now</h4>
+                <p>DM us on Instagram or WhatsApp</p>
+                <p class="highlight">COD + Free Shipping Available</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Hype Import Wear. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../js/products-data.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/category-page.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initCategoryPage('Sneakers & Shoes');
+        });
+    </script>
+    <script src="../js/landing.js"></script>
+</body>
+
+</html>
