@@ -251,7 +251,8 @@ const AppState = {
     discount: 0, // Percentage
     hasSpun: false,
     searchQuery: '', // For search filtering
-    hasEntered: false // Track if user has entered the site
+    hasEntered: false, // Track if user has entered the site
+    wishlist: [] // Initialize wishlist array
 };
 
 /* =========================================
@@ -317,16 +318,6 @@ function checkIfAlreadyEntered() {
 function init() {
     const savedSpin = localStorage.getItem('neon_hasSpun');
     const savedDiscount = localStorage.getItem('neon_discount');
-    const savedWishlist = localStorage.getItem('neon_wishlist');
-
-    // Load wishlist
-    if (savedWishlist) {
-        try {
-            AppState.wishlist = JSON.parse(savedWishlist);
-        } catch (e) {
-            AppState.wishlist = [];
-        }
-    }
 
     if (savedSpin === 'true') {
         AppState.hasSpun = true;
@@ -878,7 +869,8 @@ function openScratchModal() {
 
 // Open checkout modal (called from cart checkout button)
 function openCheckoutModal() {
-    if (AppState.cart.length === 0) {
+    const cart = CartManager.getCart();
+    if (cart.length === 0) {
         showToast('Your cart is empty!', 'error');
         return;
     }
@@ -887,9 +879,10 @@ function openCheckoutModal() {
     closeModal('cart-modal');
 
     // Update checkout summary
-    const totalItems = AppState.cart.reduce((sum, item) => sum + item.qty, 0);
-    const subtotal = AppState.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const discountValue = (subtotal * AppState.discount) / 100;
+    const totalItems = CartManager.getTotalItems();
+    const subtotal = CartManager.getSubtotal();
+    const discount = CartManager.getDiscount();
+    const discountValue = (subtotal * discount) / 100;
     const total = subtotal - discountValue;
 
     document.getElementById('checkout-items-count').textContent = totalItems;
@@ -940,18 +933,20 @@ function processCheckout() {
     message += "-------------------%0a";
     message += "*Order Details:*%0a";
 
-    AppState.cart.forEach(item => {
+    const cart = CartManager.getCart();
+    cart.forEach(item => {
         message += `• ${item.title} [Size: ${item.selectedSize}] (x${item.qty}): ₹${item.price * item.qty}%0a`;
     });
 
-    const subtotal = AppState.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const discountValue = (subtotal * AppState.discount) / 100;
+    const subtotal = CartManager.getSubtotal();
+    const discount = CartManager.getDiscount();
+    const discountValue = (subtotal * discount) / 100;
     const total = subtotal - discountValue;
 
     message += "-------------------%0a";
     message += `Subtotal: ₹${subtotal}%0a`;
-    if (AppState.discount > 0) {
-        message += `🎉 Discount (${AppState.discount}%): -₹${discountValue.toFixed(2)}%0a`;
+    if (discount > 0) {
+        message += `🎉 Discount (${discount}%): -₹${discountValue.toFixed(2)}%0a`;
     }
     message += `*💰 Total: ₹${total.toFixed(2)}*%0a`;
     message += "-------------------%0a";
@@ -1061,20 +1056,14 @@ function initSearch() {
 
 // Wishlist Functions
 function toggleWishlist(productId) {
-    const index = AppState.wishlist.indexOf(productId);
-
-    if (index > -1) {
-        // Remove from wishlist
-        AppState.wishlist.splice(index, 1);
-        showToast('Removed from wishlist', 'info');
-    } else {
-        // Add to wishlist
-        AppState.wishlist.push(productId);
+    CartManager.toggleWishlist(productId);
+    const isInWishlist = CartManager.isInWishlist(productId);
+    
+    if (isInWishlist) {
         showToast('Added to wishlist! ♥', 'success');
+    } else {
+        showToast('Removed from wishlist', 'info');
     }
-
-    // Save to localStorage
-    localStorage.setItem('neon_wishlist', JSON.stringify(AppState.wishlist));
 
     // Update UI
     updateWishlistUI();
@@ -1084,20 +1073,22 @@ function toggleWishlist(productId) {
 function updateWishlistUI() {
     // Update wishlist count badge
     const wishlistCount = document.getElementById('wishlist-count');
+    const wishlist = CartManager.getWishlist();
+    
     if (wishlistCount) {
-        wishlistCount.textContent = AppState.wishlist.length;
+        wishlistCount.textContent = wishlist.length;
     }
 
     // Update wishlist modal content
     const wishlistItems = document.getElementById('wishlist-items');
     if (!wishlistItems) return;
 
-    if (AppState.wishlist.length === 0) {
+    if (wishlist.length === 0) {
         wishlistItems.innerHTML = '<p class="empty-msg">Your wishlist is empty. ♡</p>';
         return;
     }
 
-    const wishlistProducts = productsData.filter(p => AppState.wishlist.includes(p.id));
+    const wishlistProducts = productsData.filter(p => wishlist.includes(p.id));
     wishlistItems.innerHTML = wishlistProducts.map(product => `
         <div class="wishlist-item">
             <img src="${product.img}" alt="${product.title}" class="wishlist-item-img">
