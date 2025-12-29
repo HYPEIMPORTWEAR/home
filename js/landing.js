@@ -66,140 +66,142 @@ function initRipple() {
     });
 }
 
-// Background Particles
+// Background Particles (Charged & Reactive)
 function initParticles() {
     const canvas = document.getElementById('bg-canvas');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    // Set canvas dimensions
+    function setSize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    setSize();
 
     let particlesArray = [];
-    const numberOfParticles = 500;
+    // Adjust density based on screen size
+    const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / 10000), 200);
 
-    // Mouse position
     let mouse = {
         x: null,
         y: null,
-        radius: 150
+        radius: 180 // Repel radius
     }
 
     window.addEventListener('mousemove', (event) => {
-        mouse.x = event.x;
-        mouse.y = event.y;
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+        mouse.x = null;
+        mouse.y = null;
     });
 
     class Particle {
-        constructor(x, y, directionX, directionY, size, color) {
-            this.x = x;
-            this.y = y;
-            this.directionX = (Math.random() * 0.4) - 0.2;
-            this.directionY = (Math.random() * 0.4) - 0.2;
-            this.size = size;
-            this.color = color;
-            this.baseX = x;
-            this.baseY = y;
-            this.density = (Math.random() * 30) + 1;
+        constructor() {
+            this.init();
         }
+
+        init() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+
+            // Random initial velocity (Reduced energy)
+            this.vx = (Math.random() - 0.5) * 0.8;
+            this.vy = (Math.random() - 0.5) * 0.8;
+
+            this.color = '#ccff00'; // Primary neon color
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+
         draw() {
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-            ctx.fillStyle = this.color;
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(204, 255, 0, ${this.opacity})`;
             ctx.fill();
         }
+
         update() {
-            // Check mouse distance
-            let dx = mouse.x - this.x;
-            let dy = mouse.y - this.y;
-            let distance = Math.sqrt(dx * dx + dy * dy);
-            let forceDirectionX = dx / distance;
-            let forceDirectionY = dy / distance;
-            let maxDistance = mouse.radius;
-            let force = (maxDistance - distance) / maxDistance;
-            let directionX = forceDirectionX * force * this.density;
-            let directionY = forceDirectionY * force * this.density;
+            // Random Brownian-like motion (Reduced Jitter)
+            this.vx += (Math.random() - 0.5) * 0.03;
+            this.vy += (Math.random() - 0.5) * 0.03;
 
-            if (distance < mouse.radius) {
-                // Repel
-                this.x -= directionX;
-                this.y -= directionY;
-            } else {
-                // Return to base
-                if (this.x !== this.baseX) {
-                    let dx = this.x - this.baseX;
-                    this.x -= dx / 10;
-                }
-                if (this.y !== this.baseY) {
-                    let dy = this.y - this.baseY;
-                    this.y -= dy / 10;
+            // Cap the velocity (Reduced speed limit)
+            const speedLimit = 1.2;
+            this.vx = Math.max(Math.min(this.vx, speedLimit), -speedLimit);
+            this.vy = Math.max(Math.min(this.vy, speedLimit), -speedLimit);
+
+            // Cursor Repulsion
+            if (mouse.x !== null) {
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < mouse.radius) {
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    const angle = Math.atan2(dy, dx);
+
+                    // Push away
+                    this.vx -= Math.cos(angle) * force * 0.5;
+                    this.vy -= Math.sin(angle) * force * 0.5;
                 }
             }
 
-            // Add subtle floating movement
-            this.x += this.directionX;
-            this.y += this.directionY;
+            // Move
+            this.x += this.vx;
+            this.y += this.vy;
 
-            // Bounce off edges
-            if (this.x < 0 || this.x > canvas.width) {
-                this.directionX = -this.directionX;
+            // Bounce off edges with friction
+            if (this.x < 0) {
+                this.x = 0;
+                this.vx *= -0.8;
+            } else if (this.x > canvas.width) {
+                this.x = canvas.width;
+                this.vx *= -0.8;
             }
-            if (this.y < 0 || this.y > canvas.height) {
-                this.directionY = -this.directionY;
+
+            if (this.y < 0) {
+                this.y = 0;
+                this.vy *= -0.8;
+            } else if (this.y > canvas.height) {
+                this.y = canvas.height;
+                this.vy *= -0.8;
             }
 
             this.draw();
         }
     }
 
-    function initializeParticles() {
+    function createParticles() {
         particlesArray = [];
         for (let i = 0; i < numberOfParticles; i++) {
-            let x = Math.random() * canvas.width;
-            let y = Math.random() * canvas.height;
-            let size = Math.random() * 2;
-            let color = `rgba(204, 255, 0, ${Math.random() * 0.3})`;
-            particlesArray.push(new Particle(x, y, 0, 0, size, color));
-        }
-    }
-
-    function connect() {
-        let opacityValue = 1;
-        for (let a = 0; a < particlesArray.length; a++) {
-            for (let b = a; b < particlesArray.length; b++) {
-                let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-                if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-                    opacityValue = 1 - (distance / 20000);
-                    ctx.strokeStyle = `rgba(204, 255, 0, ${opacityValue * 0.1})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                    ctx.stroke();
-                }
-            }
+            particlesArray.push(new Particle());
         }
     }
 
     function animate() {
-        requestAnimationFrame(animate);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Reset shadow for most operations to keep it fast
+        ctx.shadowBlur = 0;
 
         for (let i = 0; i < particlesArray.length; i++) {
             particlesArray[i].update();
         }
-        connect();
+
+        requestAnimationFrame(animate);
     }
 
-    // Handle resize
     window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        initializeParticles();
+        setSize();
+        createParticles();
     });
 
-    initializeParticles();
+    createParticles();
     animate();
 }
 

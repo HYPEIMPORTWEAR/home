@@ -532,6 +532,133 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Redesigned Vibe Modal (Glassmorphism) */
+        .category-modal-content {
+            background: rgba(10, 10, 10, 0.75) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(204, 255, 0, 0.2);
+            border-radius: 24px;
+            padding: 40px !important;
+            max-width: 600px !important;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8), 0 0 40px rgba(204, 255, 0, 0.1);
+        }
+
+        .cat-modal-title {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .cat-modal-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .interest-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .vibe-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .vibe-card:hover {
+            background: rgba(204, 255, 0, 0.08);
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .vibe-card-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            transition: transform 0.4s ease;
+        }
+
+        .vibe-card:hover .vibe-card-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .vibe-card-label {
+            color: #fff;
+            font-family: var(--font-heading);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .vibe-card:hover .vibe-card-label {
+            color: var(--primary);
+        }
+
+        .browse-all-link {
+            display: block;
+            text-align: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .browse-all-link:hover {
+            color: var(--primary);
+        }
+
+        @media (max-width: 600px) {
+            .category-modal-content {
+                padding: 30px 20px !important;
+                margin: 15px;
+                border-radius: 20px;
+            }
+
+            .cat-modal-title {
+                font-size: 1.8rem;
+            }
+
+            .interest-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vibe-card {
+                padding: 15px;
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .vibe-card-icon {
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+        }
     </style>
 </head>
 
@@ -813,20 +940,34 @@
         </div>
     </div>
 
-    <!-- Category Selection Modal -->
+    <!-- Category Selection Modal (Onboarding) -->
     <div id="category-modal" class="modal hidden">
         <div class="modal-content category-modal-content">
             <div class="category-selection-body">
-                <h2 class="cat-modal-title">What's Your Vibe?</h2>
-                <p class="cat-modal-subtitle">Pick your interests to explore</p>
+                <h2 class="cat-modal-title">WHAT'S YOUR VIBE?</h2>
+                <p class="cat-modal-subtitle">Pick a category to start your haul</p>
                 <div id="interest-selection" class="interest-grid">
-                    <a href="products/jackets.html" class="interest-pill">Jackets & Bombers</a>
-                    <a href="products/hoodies.html" class="interest-pill">Hoodies</a>
-                    <a href="products/tracksuits.html" class="interest-pill">Track Suits</a>
-                    <a href="products/sneakers.html" class="interest-pill">Sneakers & Shoes</a>
+                    <a href="products/jackets.html" class="vibe-card">
+                        <span class="vibe-card-icon">🧥</span>
+                        <span class="vibe-card-label">Jackets & Bombers</span>
+                    </a>
+                    <a href="products/hoodies.html" class="vibe-card">
+                        <span class="vibe-card-icon">👕</span>
+                        <span class="vibe-card-label">Hoodies</span>
+                    </a>
+                    <a href="products/tracksuits.html" class="vibe-card">
+                        <span class="vibe-card-icon">👟</span>
+                        <span class="vibe-card-label">Track Suits</span>
+                    </a>
+                    <a href="products/sneakers.html" class="vibe-card">
+                        <span class="vibe-card-icon">🔥</span>
+                        <span class="vibe-card-label">Sneakers & Shoes</span>
+                    </a>
                 </div>
-                <button id="confirm-interests-btn" class="btn-primary full-width mt-20"
-                    onclick="closeModal('category-modal')">BROWSE ALL PRODUCTS</button>
+                <button id="confirm-interests-btn" class="btn-primary full-width"
+                    onclick="closeModal('category-modal')">EXPLORE ALL DROPS</button>
+                <a href="#" class="browse-all-link" onclick="closeModal('category-modal'); return false;">Just browsing
+                    for now</a>
             </div>
         </div>
     </div>
@@ -901,6 +1042,17 @@
             }
         });
 
+        // ESC Key to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal:not(.hidden)');
+                openModals.forEach(modal => {
+                    modal.classList.add('hidden');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
         // Splash Screen Logic
         const splashScreen = document.getElementById('splash-screen');
         const enterBtn = document.getElementById('enter-site-btn');
@@ -920,17 +1072,17 @@
         // Check if already entered this session
         if (sessionStorage.getItem('hype_hasEntered') === 'true') {
             splashScreen.classList.add('hidden');
+            // If they already entered, we still show the vibe modal on reload to ensure "poping everutime"
+            // but after a slight delay so it's not jarring
+            setTimeout(() => openModal('category-modal'), 800);
         }
 
         enterBtn.addEventListener('click', () => {
             splashScreen.classList.add('hidden');
             sessionStorage.setItem('hype_hasEntered', 'true');
 
-            // Show scratch card if not spun
-            const hasSpun = localStorage.getItem('neon_hasSpun');
-            if (hasSpun !== 'true') {
-                setTimeout(() => openModal('spin-modal'), 500);
-            }
+            // Always show category selection modal first when entering
+            setTimeout(() => openModal('category-modal'), 500);
         });
 
         // Toggle FAB visibility based on spin status
@@ -1076,7 +1228,16 @@
                     btn.classList.add('hidden');
                 }
             });
+
+            // Sync wishlist and cart on boot
+            updateCartUI();
+            updateWishlistUI();
         });
+
+        // Resolve Path Helper (Root Context)
+        function resolvePath(path) {
+            return path; // On index.html, paths are already relative to root
+        }
 
         // Update Cart UI function
         function updateCartUI() {
@@ -1091,6 +1252,7 @@
             } else {
                 cartItemsContainer.innerHTML = cart.map(item => `
                     <div class="cart-item">
+                        <img src="${resolvePath(item.img)}" alt="${item.title}" class="cart-item-img">
                         <div class="cart-item-details">
                             <h4>${item.title}</h4>
                             <p class="cart-variant">Size: ${item.selectedSize}</p>
@@ -1110,17 +1272,83 @@
             const discountValue = subtotal * discount / 100;
             const total = subtotal - discountValue;
 
-            cartSubtotal.innerText = `₹${subtotal.toFixed(2)}`;
-            cartTotal.innerText = `₹${total.toFixed(2)}`;
+            if (cartSubtotal) cartSubtotal.innerText = `₹${subtotal.toFixed(2)}`;
+            if (cartTotal) cartTotal.innerText = `₹${total.toFixed(2)}`;
 
             if (discount > 0 && discountRow) {
                 discountRow.classList.remove('hidden');
                 document.getElementById('discount-rate').innerText = discount;
                 document.getElementById('discount-amount').innerText = `₹${discountValue.toFixed(2)}`;
+            } else if (discountRow) {
+                discountRow.classList.add('hidden');
             }
 
-            document.getElementById('checkout-items-count').innerText = CartManager.getTotalItems();
-            document.getElementById('checkout-total').innerText = `₹${total.toFixed(0)}`;
+            const itemsCount = document.getElementById('checkout-items-count');
+            const checkoutTotal = document.getElementById('checkout-total');
+            if (itemsCount) itemsCount.innerText = CartManager.getTotalItems();
+            if (checkoutTotal) checkoutTotal.innerText = `₹${total.toFixed(0)}`;
+        }
+
+        // Update Wishlist UI function
+        function updateWishlistUI() {
+            const wishlist = CartManager.getWishlist();
+            const container = document.getElementById('wishlist-items');
+            if (!container) return;
+
+            if (wishlist.length === 0) {
+                container.innerHTML = '<p class="empty-msg">Your wishlist is empty. ♡</p>';
+            } else {
+                // We need productsData to find titles/images
+                const wishlistProducts = wishlist.map(id => productsData.find(p => p.id === id)).filter(p => p);
+                container.innerHTML = wishlistProducts.map(product => `
+                    <div class="wishlist-item">
+                        <img src="${resolvePath(product.img)}" alt="${product.title}" class="wishlist-item-img">
+                        <div class="wishlist-item-details">
+                            <h4>${product.title}</h4>
+                            <p>₹${product.price}</p>
+                        </div>
+                        <button class="wishlist-remove" onclick="toggleWishlist(${product.id})">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Toggle Wishlist global bridge
+        function toggleWishlist(productId) {
+            CartManager.toggleWishlist(productId);
+            updateWishlistUI();
+
+            // Show toast feedback
+            const isNowInWishlist = CartManager.isInWishlist(productId);
+            showToast(
+                isNowInWishlist ? 'Added to wishlist!' : 'Removed from wishlist',
+                isNowInWishlist ? 'success' : 'info'
+            );
+        }
+
+        // Toast notification (Root)
+        function showToast(message, type = 'info') {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('toast-fade');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         function updateQty(cartId, change) {

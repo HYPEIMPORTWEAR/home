@@ -14,8 +14,7 @@ const productsData = [
         img: "assets/products/1_urban_style_jacket/main.jpg",
         images: [
             "assets/products/1_urban_style_jacket/main.jpg",
-            "assets/products/1_urban_style_jacket/588760247_17844800411654572_7892548426847067746_n.jpg",
-            "assets/products/1_urban_style_jacket/590397551_17844800402654572_399866891476313813_n.jpg"
+            "assets/products/1_urban_style_jacket/590401509_17845016277654572_4264836126902837239_n.jpg"
         ],
         post_url: "https://www.instagram.com/hypeimportwear/p/DSofzubAf36/",
         description: "Premium fabric with cartoon print blend. Free delivery available.",
@@ -31,9 +30,9 @@ const productsData = [
         img: "assets/products/2_sinister_yellow_jacket/main.jpg",
         images: [
             "assets/products/2_sinister_yellow_jacket/main.jpg",
-            "assets/products/2_sinister_yellow_jacket/588690411_17844799188654572_2399541476754009757_n.jpg",
-            "assets/products/2_sinister_yellow_jacket/590371422_17844799185654572_4181389665654009001_n.jpg",
-            "assets/products/2_sinister_yellow_jacket/603090101_17844799179654572_168571012818139422_n.jpg"
+            "assets/products/2_sinister_yellow_jacket/587213518_17844921213654572_3721632825071335872_n.jpg",
+            "assets/products/2_sinister_yellow_jacket/590376687_17844921177654572_8262411541084572688_n.jpg",
+            "assets/products/2_sinister_yellow_jacket/602652948_17844921186654572_2289652092599002921_n.jpg"
         ],
         post_url: "https://www.instagram.com/hypeimportwear/p/DSof0AngZuD/",
         description: "Yellow jacket with backprint. Perfect for Bikers, Clubbing, and Streetwear lovers.",
@@ -49,8 +48,8 @@ const productsData = [
         img: "assets/products/3_hellstar_avirex_bomber/main.jpg",
         images: [
             "assets/products/3_hellstar_avirex_bomber/main.jpg",
-            "assets/products/3_hellstar_avirex_bomber/590378568_17844798792654572_3219099405199588696_n.jpg",
-            "assets/products/3_hellstar_avirex_bomber/604631009_17844798795654572_6091285426888809960_n.jpg"
+            "assets/products/3_hellstar_avirex_bomber/588897759_17844897318654572_769284691381029834_n.jpg",
+            "assets/products/3_hellstar_avirex_bomber/590429944_17844897336654572_4425432447961678708_n.jpg"
         ],
         post_url: "https://www.instagram.com/hypeimportwear/p/DSof2Ueglrc/",
         description: "Limited 50th Anniversary Bomber. Genuine European Lamb material.",

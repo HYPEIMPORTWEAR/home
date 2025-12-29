@@ -242,9 +242,12 @@ const productsData = [
     },
 ];
 
+// Help resolve image paths (for consistency with other pages)
+function resolvePath(path) {
+    return path;
+}
+
 const AppState = {
-    cart: [],
-    wishlist: [], // Array of product IDs
     discount: 0, // Percentage
     hasSpun: false,
     searchQuery: '', // For search filtering
@@ -411,7 +414,7 @@ function renderProducts(searchQuery = '') {
             }
 
             // Check if in wishlist
-            const isInWishlist = AppState.wishlist.includes(product.id);
+            const isInWishlist = CartManager.isInWishlist(product.id);
             const heartIcon = isInWishlist ? '♥' : '♡';
             const heartClass = isInWishlist ? 'product-wishlist active' : 'product-wishlist';
 
@@ -435,6 +438,7 @@ function renderProducts(searchQuery = '') {
 
 
 function updateCartUI() {
+    const cart = CartManager.getCart();
     const cartItemsContainer = document.getElementById('cart-items');
     const cartCount = document.getElementById('cart-count');
     const cartSubtotal = document.getElementById('cart-subtotal');
@@ -444,15 +448,16 @@ function updateCartUI() {
     const discountAmount = document.getElementById('discount-amount');
 
     // Update Badge
-    const totalItems = AppState.cart.reduce((sum, item) => sum + item.qty, 0);
-    cartCount.innerText = totalItems;
+    const totalItems = CartManager.getTotalItems();
+    if (cartCount) cartCount.innerText = totalItems;
 
     // Render Items
-    if (AppState.cart.length === 0) {
+    if (cart.length === 0) {
         cartItemsContainer.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
     } else {
-        cartItemsContainer.innerHTML = AppState.cart.map(item => `
+        cartItemsContainer.innerHTML = cart.map(item => `
             <div class="cart-item">
+                <img src="${resolvePath(item.img)}" alt="${item.title}" class="cart-item-img">
                 <div class="cart-item-details">
                     <h4>${item.title}</h4>
                     <p class="cart-variant">Size: ${item.selectedSize}</p>
@@ -468,18 +473,19 @@ function updateCartUI() {
     }
 
     // Calculate Totals
-    const subtotal = AppState.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const discountValue = (subtotal * AppState.discount) / 100;
+    const subtotal = CartManager.getSubtotal();
+    const discount = CartManager.getDiscount();
+    const discountValue = (subtotal * discount) / 100;
     const total = subtotal - discountValue;
 
-    cartSubtotal.innerText = `₹${subtotal.toFixed(2)}`;
-    cartTotal.innerText = `₹${total.toFixed(2)}`;
+    if (cartSubtotal) cartSubtotal.innerText = `₹${subtotal.toFixed(2)}`;
+    if (cartTotal) cartTotal.innerText = `₹${total.toFixed(2)}`;
 
-    if (AppState.discount > 0) {
+    if (discount > 0 && discountRow) {
         discountRow.classList.remove('hidden');
-        discountRate.innerText = AppState.discount;
-        discountAmount.innerText = `₹${discountValue.toFixed(2)}`;
-    } else {
+        if (discountRate) discountRate.innerText = discount;
+        if (discountAmount) discountAmount.innerText = `₹${discountValue.toFixed(2)}`;
+    } else if (discountRow) {
         discountRow.classList.add('hidden');
     }
 }
@@ -606,24 +612,14 @@ function updateSliderDots() {
 function addToCartFromModal() {
     if (!currentSelectedProduct) return;
 
-    const selectedSize = document.querySelector('input[name="size"]:checked').value;
-
-    // Create a unique ID for cart item based on product ID + Options
-    // This allows adding same product with different sizes as separate items
-    const cartItemId = `${currentSelectedProduct.id}-${selectedSize}`;
-
-    const existingItem = AppState.cart.find(item => item.cartId === cartItemId);
-
-    if (existingItem) {
-        existingItem.qty++;
-    } else {
-        AppState.cart.push({
-            ...currentSelectedProduct,
-            cartId: cartItemId,
-            selectedSize: selectedSize,
-            qty: 1
-        });
+    const selectedSizeElement = document.querySelector('input[name="size"]:checked');
+    if (!selectedSizeElement) {
+        showToast("Please select a size", "error");
+        return;
     }
+    const selectedSize = selectedSizeElement.value;
+
+    CartManager.addItem(currentSelectedProduct, selectedSize);
 
     updateCartUI();
     closeModal('product-modal');
@@ -638,18 +634,7 @@ function addToCart(id) {
 }
 
 function updateQty(cartId, change) {
-    // Note: cartId is now string (e.g. "1-M")
-    // If passed as number from old HTML, might need check, but we updated render logic below
-    const itemIndex = AppState.cart.findIndex(item => item.cartId === cartId);
-    if (itemIndex === -1) return;
-
-    const item = AppState.cart[itemIndex];
-    item.qty += change;
-
-    if (item.qty <= 0) {
-        AppState.cart.splice(itemIndex, 1);
-    }
-
+    CartManager.updateQty(cartId, change);
     updateCartUI();
 }
 

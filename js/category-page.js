@@ -6,6 +6,14 @@
 let currentCategory = '';
 let currentProduct = null;
 
+// Help resolve image paths based on current location
+function resolvePath(path) {
+    if (!path) return '';
+    // If we're on a category page (in products/ folder), we need ../
+    const isSubFolder = window.location.pathname.includes('/products/');
+    return isSubFolder ? '../' + path : path;
+}
+
 // Initialize category page
 function initCategoryPage(categoryName) {
     currentCategory = categoryName;
@@ -71,7 +79,7 @@ function renderCategoryProducts() {
             <div class="product-card" onclick="openProductModal(${product.id})">
                 ${stockBadge}
                 <button class="${heartClass}" onclick="event.stopPropagation(); toggleWishlist(${product.id})" title="Add to Wishlist">${heartIcon}</button>
-                <img src="../${product.img}" alt="${product.title}" class="product-img">
+                <img src="${resolvePath(product.img)}" alt="${product.title}" class="product-img">
                 <div class="product-info">
                     <h3 class="product-title">${product.title}</h3>
                     <p class="product-price">₹${product.price}</p>
@@ -101,7 +109,7 @@ function openProductModal(productId) {
     // Render Images
     images.forEach((imgSrc, index) => {
         const img = document.createElement('img');
-        img.src = '../' + imgSrc;
+        img.src = resolvePath(imgSrc);
         img.className = 'modal-product-img';
         img.alt = `${product.title} view ${index + 1}`;
         slider.appendChild(img);
@@ -141,7 +149,7 @@ function openProductModal(productId) {
     if (images.length > 1) {
         images.forEach((imgSrc, index) => {
             const thumb = document.createElement('img');
-            thumb.src = '../' + imgSrc;
+            thumb.src = resolvePath(imgSrc);
             thumb.className = 'thumbnail';
             thumb.onclick = () => scrollToSlide(index);
             thumbnailsContainer.appendChild(thumb);
@@ -242,6 +250,17 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// ESC Key to close modals
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const openModals = document.querySelectorAll('.modal:not(.hidden)');
+        openModals.forEach(modal => {
+            modal.classList.add('hidden');
+        });
+        document.body.style.overflow = '';
+    }
+});
+
 // Update Cart UI
 function updateCartUI() {
     const cart = CartManager.getCart();
@@ -257,6 +276,7 @@ function updateCartUI() {
     } else {
         cartItemsContainer.innerHTML = cart.map(item => `
             <div class="cart-item">
+                <img src="${resolvePath(item.img)}" alt="${item.title}" class="cart-item-img">
                 <div class="cart-item-details">
                     <h4>${item.title}</h4>
                     <p class="cart-variant">Size: ${item.selectedSize}</p>
@@ -309,7 +329,7 @@ function updateWishlistUI() {
         const wishlistProducts = wishlist.map(id => productsData.find(p => p.id === id)).filter(p => p);
         container.innerHTML = wishlistProducts.map(product => `
             <div class="wishlist-item">
-                <img src="../${product.img}" alt="${product.title}" class="wishlist-item-img">
+                <img src="${resolvePath(product.img)}" alt="${product.title}" class="wishlist-item-img">
                 <div class="wishlist-item-details">
                     <h4>${product.title}</h4>
                     <p>₹${product.price}</p>

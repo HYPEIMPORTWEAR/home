@@ -5,7 +5,7 @@
 
 const CartManager = {
     // Storage keys
-    CART_KEY: 'hype_cart',
+    CART_KEY: 'neon_cart',
     WISHLIST_KEY: 'neon_wishlist',
     DISCOUNT_KEY: 'neon_discount',
     HAS_SPUN_KEY: 'neon_hasSpun',
@@ -34,9 +34,9 @@ const CartManager = {
     addItem(product, selectedSize, qty = 1) {
         const cart = this.getCart();
         const cartItemId = `${product.id}-${selectedSize}`;
-        
+
         const existingItem = cart.find(item => item.cartId === cartItemId);
-        
+
         if (existingItem) {
             existingItem.qty += qty;
         } else {
@@ -50,7 +50,7 @@ const CartManager = {
                 qty: qty
             });
         }
-        
+
         this.saveCart(cart);
         this.updateCartBadge();
         return cart;
@@ -60,15 +60,15 @@ const CartManager = {
     updateQty(cartId, change) {
         const cart = this.getCart();
         const itemIndex = cart.findIndex(item => item.cartId === cartId);
-        
+
         if (itemIndex === -1) return cart;
-        
+
         cart[itemIndex].qty += change;
-        
+
         if (cart[itemIndex].qty <= 0) {
             cart.splice(itemIndex, 1);
         }
-        
+
         this.saveCart(cart);
         this.updateCartBadge();
         return cart;
@@ -119,6 +119,10 @@ const CartManager = {
         const badge = document.getElementById('cart-count');
         if (badge) {
             badge.innerText = this.getTotalItems();
+            // Pulse animation
+            badge.classList.remove('pulse-animation');
+            void badge.offsetWidth; // Trigger reflow
+            badge.classList.add('pulse-animation');
         }
     },
 
@@ -140,13 +144,13 @@ const CartManager = {
     toggleWishlist(productId) {
         const wishlist = this.getWishlist();
         const index = wishlist.indexOf(productId);
-        
+
         if (index > -1) {
             wishlist.splice(index, 1);
         } else {
             wishlist.push(productId);
         }
-        
+
         this.saveWishlist(wishlist);
         this.updateWishlistBadge();
         return wishlist;
@@ -205,13 +209,29 @@ const CartManager = {
         const whatsappNumber = '918309223139';
         const url = `https://wa.me/${whatsappNumber}?text=${message}`;
         window.open(url, '_blank');
+    },
+
+    // Global UI Refresh
+    refreshAllUI() {
+        this.updateCartBadge();
+        this.updateWishlistBadge();
+        // Call page-specific refresh if it exists
+        if (typeof updateCartUI === 'function') updateCartUI();
+        if (typeof updateWishlistUI === 'function') updateWishlistUI();
+        if (typeof renderCategoryProducts === 'function') renderCategoryProducts();
     }
 };
 
+// Sync across tabs
+window.addEventListener('storage', (e) => {
+    if (e.key === CartManager.CART_KEY || e.key === CartManager.WISHLIST_KEY) {
+        CartManager.refreshAllUI();
+    }
+});
+
 // Initialize badges on page load
 document.addEventListener('DOMContentLoaded', () => {
-    CartManager.updateCartBadge();
-    CartManager.updateWishlistBadge();
+    CartManager.refreshAllUI();
 });
 
 // Export for use in other scripts

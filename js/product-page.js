@@ -7,6 +7,15 @@
 let currentProduct = null;
 let currentImageIndex = 0;
 
+// Help resolve image paths based on current location
+function resolvePath(path) {
+    // Product pages are in /products/ folder, so they need ../ prefix for root assets
+    if (!path.startsWith('http') && !path.startsWith('../')) {
+        return '../' + path;
+    }
+    return path;
+}
+
 // Initialize product page
 function initProductPage(product) {
     currentProduct = product;
@@ -36,14 +45,14 @@ function setupGallery() {
 
     // Set initial image
     if (mainImg) {
-        mainImg.src = images[0];
+        mainImg.src = resolvePath(images[0]);
         mainImg.alt = currentProduct.title;
     }
 
     // Create thumbnails
     if (thumbnailStrip && images.length > 1) {
         thumbnailStrip.innerHTML = images.map((img, index) => `
-            <img src="${img}" 
+            <img src="${resolvePath(img)}" 
                  alt="${currentProduct.title} view ${index + 1}" 
                  class="thumbnail ${index === 0 ? 'active' : ''}"
                  onclick="selectImage(${index})"
@@ -82,7 +91,7 @@ function selectImage(index) {
 
     const mainImg = document.getElementById('main-product-image');
     if (mainImg) {
-        mainImg.src = images[index];
+        mainImg.src = resolvePath(images[index]);
     }
 
     // Update thumbnail active state
@@ -179,7 +188,7 @@ function renderRelatedProducts() {
     container.innerHTML = related.map(product => `
         <a href="${product.slug}.html" class="product-card-link">
             <div class="product-card">
-                <img src="../${product.img}" alt="${product.title}" class="product-img">
+                <img src="${resolvePath(product.img)}" alt="${product.title}" class="product-img">
                 <div class="product-info">
                     <h3 class="product-title">${product.title}</h3>
                     <p class="product-price">₹${product.price}</p>
@@ -187,6 +196,66 @@ function renderRelatedProducts() {
             </div>
         </a>
     `).join('');
+}
+
+// Update Cart UI for product detail page
+function updateCartUI() {
+    const cart = CartManager.getCart();
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartSubtotal = document.getElementById('cart-subtotal');
+    const cartTotal = document.getElementById('cart-total');
+    const discountRow = document.querySelector('.discount-row');
+
+    if (!cartItemsContainer) return;
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="empty-msg">Your cart is empty.</p>';
+    } else {
+        cartItemsContainer.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <img src="${resolvePath(item.img)}" alt="${item.title}" class="cart-item-img">
+                <div class="cart-item-details">
+                    <h4>${item.title}</h4>
+                    <p class="cart-variant">Size: ${item.selectedSize}</p>
+                    <p>₹${item.price} x ${item.qty}</p>
+                </div>
+                <div class="cart-controls">
+                    <button onclick="updateQty('${item.cartId}', -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="updateQty('${item.cartId}', 1)">+</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    const subtotal = CartManager.getSubtotal();
+    const discount = CartManager.getDiscount();
+    const discountValue = subtotal * discount / 100;
+    const total = subtotal - discountValue;
+
+    if (cartSubtotal) cartSubtotal.innerText = `₹${subtotal.toFixed(2)}`;
+    if (cartTotal) cartTotal.innerText = `₹${total.toFixed(2)}`;
+
+    if (discount > 0 && discountRow) {
+        discountRow.classList.remove('hidden');
+        const rateEl = document.getElementById('discount-rate');
+        const amountEl = document.getElementById('discount-amount');
+        if (rateEl) rateEl.innerText = discount;
+        if (amountEl) amountEl.innerText = `₹${discountValue.toFixed(2)}`;
+    } else if (discountRow) {
+        discountRow.classList.add('hidden');
+    }
+
+    const itemsCount = document.getElementById('checkout-items-count');
+    const checkoutTotal = document.getElementById('checkout-total');
+    if (itemsCount) itemsCount.innerText = CartManager.getTotalItems();
+    if (checkoutTotal) checkoutTotal.innerText = `₹${total.toFixed(0)}`;
+}
+
+// Global update quantity bridge
+function updateQty(cartId, change) {
+    CartManager.updateQty(cartId, change);
+    updateCartUI();
 }
 
 // Show Toast Notification
