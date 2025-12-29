@@ -278,11 +278,11 @@ function showToast(message, type = 'info') {
 
     container.appendChild(toast);
 
-    // Auto remove after 3 seconds
+    // Auto remove after 5 seconds for better visibility
     setTimeout(() => {
         toast.classList.add('toast-fade');
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 5000);
 }
 
 // Open Cart Modal (uses shared function if available)

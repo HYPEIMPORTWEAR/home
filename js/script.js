@@ -979,14 +979,18 @@ function checkout() {
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <span class="toast-message">${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
     container.appendChild(toast);
 
-    // Remove after animation
+    // Remove after 5 seconds for better visibility
     setTimeout(() => {
-        toast.remove();
-    }, 2500);
+        toast.classList.add('toast-fade');
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
 }
 
 // Category Pills - Render navigation pills
