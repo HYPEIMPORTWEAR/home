@@ -16,7 +16,7 @@ const productsData = [
             "assets/products/1_urban_style_jacket/main.jpg",
             "assets/products/1_urban_style_jacket/590401509_17845016277654572_4264836126902837239_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSofzubAf36/",
+        post_url: "https://www.instagram.com/p/DSrOi8UAVtw/",
         description: "Premium fabric with cartoon print blend. Free delivery available.",
         features: ["Color: Black/White", "Material: Premium fabric", "Stock: Limited"],
         options: ["M", "L", "XL"]
@@ -34,7 +34,7 @@ const productsData = [
             "assets/products/2_sinister_yellow_jacket/590376687_17844921177654572_8262411541084572688_n.jpg",
             "assets/products/2_sinister_yellow_jacket/602652948_17844921186654572_2289652092599002921_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSof0AngZuD/",
+        post_url: "https://www.instagram.com/p/DSp5uwRAW4h/",
         description: "Yellow jacket with backprint. Perfect for Bikers, Clubbing, and Streetwear lovers.",
         features: ["Color: Yellow", "Use Case: Bikers, Clubbing", "Stock: Limited"],
         options: ["M", "L", "XL"]
@@ -51,7 +51,7 @@ const productsData = [
             "assets/products/3_hellstar_avirex_bomber/588897759_17844897318654572_769284691381029834_n.jpg",
             "assets/products/3_hellstar_avirex_bomber/590429944_17844897336654572_4425432447961678708_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSof2Ueglrc/",
+        post_url: "https://www.instagram.com/p/DSpsLTGAbt4/",
         description: "Limited 50th Anniversary Bomber. Genuine European Lamb material.",
         features: ["Brand: Hellstar x Avirex", "Color: Salvage Red", "Material: Genuine European Lamb"],
         options: ["M", "L", "XL"]
@@ -69,7 +69,7 @@ const productsData = [
             "assets/products/4_varsity_bomber_vegan/603077481_17844798243654572_9119503025332998564_n.jpg",
             "assets/products/4_varsity_bomber_vegan/604437468_17844797565654572_789222237267538310_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSoezDuAeu2/",
+        post_url: "https://www.instagram.com/p/DSoezDuAeu2/",
         description: "Varsity Bomber with Vegan Leather Sleeves. Contrast vegan leather sleeves + patches.",
         features: ["Discount: 10% OFF", "Material: Vegan Leather", "Stock: Limited"],
         options: ["M", "L", "XL"]
@@ -88,7 +88,7 @@ const productsData = [
             "assets/products/5_steelers_varsity/601667013_17844796284654572_803365437539443010_n.jpg",
             "assets/products/5_steelers_varsity/604623836_17844796311654572_1275738150480009037_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSodw92AYBL/",
+        post_url: "https://www.instagram.com/p/DSodw92AYBL/",
         description: "Pittsburgh Steelers-Inspired Varsity Bomber. Embroidered logo patches.",
         features: ["Edition: Limited", "Features: Embroidered patches", "Stock: Limited"],
         options: ["M", "L", "XL"]
@@ -107,7 +107,7 @@ const productsData = [
             "assets/products/6_heavy_backprint_hoodie/588732345_17844794622654572_9047878031048851947_n.jpg",
             "assets/products/6_heavy_backprint_hoodie/590383713_17844794643654572_1206179385062118899_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSocU0sgWhb/",
+        post_url: "https://www.instagram.com/p/DSocU0sgWhb/",
         description: "Heavy Backprint Hoodies Collection. 400GSM premium fabric.",
         features: ["Material: 400GSM", "Features: Bold backprints", "Delivery: Free shipping"],
         options: ["M", "L", "XL", "XXL"]
@@ -128,7 +128,7 @@ const productsData = [
             "assets/products/7_adidas_brown_white_set/603089755_17844716637654572_1658872015948634976_n.jpg",
             "assets/products/7_adidas_brown_white_set/604227739_17844716649654572_6983397328359225_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSnSSR3Aayp/",
+        post_url: "https://www.instagram.com/p/DSnSSR3Aayp/",
         description: "Adidas Brown & White Track Suit. Heavy pocket design, premium quality.",
         features: ["Brand: Adidas", "Offer: 10% OFF (Follow+Share)", "Delivery: COD + Free Shipping"],
         options: ["M", "L", "XL"]
@@ -146,7 +146,7 @@ const productsData = [
             "assets/products/8_adidas_red_track_suit/602170152_17844714348654572_6065569245176989815_n.jpg",
             "assets/products/8_adidas_red_track_suit/605292941_17844714357654572_8440627562442998201_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSnRHb2AUFv/",
+        post_url: "https://www.instagram.com/p/DSnRHb2AUFv/",
         description: "Adidas Red Track Suit. Bold street look on and off court.",
         features: ["Brand: Adidas", "Use Case: Street/Sport", "Delivery: COD (10km)"],
         options: ["M", "L", "XL"]
@@ -163,7 +163,7 @@ const productsData = [
             "assets/products/9_white_jordan_track_suit/604157190_17844711765654572_5583952548876155417_n.jpg",
             "assets/products/9_white_jordan_track_suit/604641886_17844711783654572_7332416044192783028_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSnP7a-gYDx/",
+        post_url: "https://www.instagram.com/p/DSnP7a-gYDx/",
         description: "White Jordan Track Suit. Color-blocked design (Black/White/Green).",
         features: ["Brand: Jordan/Nike", "Design: Color-blocked", "Offer: 10% OFF (Follow+Share)"],
         options: ["M", "L", "XL"]
@@ -216,7 +216,7 @@ const productsData = [
             "assets/products/12_jordan_1_mid/590523419_17844417441654572_7210351908452055206_n.jpg",
             "assets/products/12_jordan_1_mid/604417329_17844417393654572_5394716126627320264_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSjWnGcASo1/",
+        post_url: "https://www.instagram.com/p/DSjWnGcASo1/",
         description: "Jordan 1 Mid Heat Drop. Street style unlocked.",
         features: ["Color: Turquoise and Black", "Original Price: ₹2899", "Order: PRE-ORDER ONLY"],
         options: ["UK 7", "UK 8", "UK 9", "UK 10"]
@@ -250,7 +250,7 @@ const productsData = [
             "assets/products/14_adidas_samba/590387748_17844404925654572_5764156028560891378_n.jpg",
             "assets/products/14_adidas_samba/590577544_17844404916654572_9129778170798306717_n.jpg"
         ],
-        post_url: "https://www.instagram.com/hypeimportwear/p/DSjRaZSAT3H/",
+        post_url: "https://www.instagram.com/p/DSjRaZSAT3H/",
         description: "Iconic classic sneaker. White with Black stripe.",
         features: ["Brand: Adidas", "Promo: SAMBA10", "Order: PRE-ORDER ONLY"],
         options: ["UK 7", "UK 8", "UK 9", "UK 10"]
